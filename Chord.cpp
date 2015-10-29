@@ -43,6 +43,8 @@ typedef struct SuccTable {
 int s, n, m;
 int *exist_key;                     /* Used to store existed key */
 SuccTable **st;                     /* An list of SuccTable */
+FILE *fin, *fout;
+char *file_in, *file_out;            /* The file name of input and output file */
 
 /*
  * Function: Create_succ_table
@@ -62,7 +64,7 @@ void create_succ_table(int id) {
     for (int i = 0; i < MAX_FINGER_NUM; i++) {
         st[id]->f[i] = (Finger *)malloc(sizeof(Finger));
         st[id]->f[i]->number = i;
-        st[id]->f[i]->expect_succ = (id + (int)pow(2, i)) % HASH_SPACE;     /* Get expect successor number */
+        st[id]->f[i]->expect_succ = (id + (int)pow(2, (double)i)) % HASH_SPACE;     /* Get expect successor number */
         for (int k = st[id]->f[i]->expect_succ; ; k++) {
             if (k == HASH_SPACE) k = 0;
             if (st[k] != NULL) {
@@ -180,7 +182,7 @@ void chord_query(int id, int key, int path) {
     while (p->next != NULL) {
         p = p->next;
         if (p->value == key) {              /* If found that key in this node */
-            cout << path << endl;
+            fprintf(fout, "%d\n", path);
             return;
         }
     }
@@ -194,12 +196,49 @@ void chord_query(int id, int key, int path) {
 }
 
 /*
+ * Function: Get_output_file
+ * -------------------
+ *   This function is used to get the name of the output file
+ *
+ *   Parameters:
+ *      input: the name of the input file
+ *
+ *   Returns:
+ *      the name of the output file
+ */
+
+char *get_output_file(char *input) {
+    char *output;
+    output = (char *)malloc(sizeof(char) * 1024);
+    strcpy(output, input);
+    char *end = output + strlen(output) - 1;
+    while (end > output) {
+        if (*end == '.') {                  /* If found extension name */
+            *(end + 1) = 'o';
+            *(end + 2) = 'u';
+            *(end + 3) = 't';
+            *(end + 4) = '\0';
+            return output;                  /* Change extension name to .out and return it */
+        }
+        end--;
+    }
+    end = output + strlen(output) - 1;      /* If not found extension name */
+    *(end + 1) = '.';
+    *(end + 2) = 'o';
+    *(end + 3) = 'u';
+    *(end + 4) = 't';
+    *(end + 5) = '\0';                      /* Just add .out extension at the end of file name */
+    return output;
+}
+
+/*
  * Function: Main
  * -------------------
  *   The main function
  *
  *   Parameters:
- *      no parameters
+ *      argc: parameter count
+ *      argv[]: parameter array
  *
  *   Returns:
  *      void
@@ -207,8 +246,18 @@ void chord_query(int id, int key, int path) {
 
 int main() {
     int id, key;
-    cin >> s;
-    cin >> n >> m;
+    file_in = (char *)malloc(sizeof(char) * 1024);
+    cout << "Please input a file name:" << endl;
+    scanf("%s", file_in);               /* Get input file name */
+    fin = fopen(file_in, "r+");
+    if (!fin) {                         /* If input file is not exist or can't open */
+        cout << "Can't open input file " <<  file_in << "! " << endl;
+        return 1;
+    }
+    file_out = get_output_file(file_in);
+    fout = fopen(file_out, "w");
+    fscanf(fin, "%d", &s);
+    fscanf(fin, "%d %d", &n, &m);
     if (n == 0) {                       /* There is no joined node */
         cout << "No joined node!" << endl;
         return 0;
@@ -221,26 +270,26 @@ int main() {
     for (int i = 0; i < HASH_SPACE; i++)
         st[i] = NULL;                   /* Initial all node to not-joined state */
     for (int i = 0; i < n; i++) {
-        cin >> id;
+        fscanf(fin, "%d", &id);
         create_succ_table(id);          /* Join one node and create successor table for that node */
         for (int j = 0; j < HASH_SPACE; j++)
             if (st[j] && j != id)
                 update_succ_table(j);   /* Update other nodes' successor table */
     }
     for (int i = 0; i < m; i++) {
-        cin >> key;
+        fscanf(fin, "%d", &key);
         exist_key[key] = 1;
         store_key(key);                 /* Store key */
     }
     //print_succ_table();
     while (1) {
-        cin >> key >> id;
+        fscanf(fin, "%d %d", &key, &id);
         if (key == -1 && id == -1)      /* Until end */
             break;
         if (st[id] == NULL)             /* If that query node is not exist */
-            cout << "Node " << id << " is not exist!" << endl;
+            fprintf(fout, "Node %d is not exist!\n", id);
         else if (!exist_key[key]) {     /* If this key is not exist */
-            cout << "Can't find this key!" << endl;
+            fprintf(fout, "Can't find this key!\n");
         } else {
             chord_query(id, key, 0);    /* Answer query */
         }
