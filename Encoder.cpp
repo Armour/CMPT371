@@ -116,7 +116,7 @@ int main() {
     fout = fopen(file_out, "w");
     while (!feof(fin)) {
         fscanf(fin, "%c", &c);
-        if (c == '\n') continue;            /* New line character should be ignore */
+        //if (c == '\n') continue;            /* New line character should be ignore */
         count++;
         bin = (bin << 8) + (int)c;
         if (count == 3) {                   /* If already have 3 characters */

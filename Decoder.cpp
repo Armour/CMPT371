@@ -126,6 +126,7 @@ int main() {
                 bin >>= 4;
                 fprintf(fout, "%c", bin);
             }
+            cout << "Decode done!" << endl;
             return 0;
         }
         count++;
