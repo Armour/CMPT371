@@ -2,3 +2,5 @@ Chord
 Decoder
 Encoder
 *.txt
+*.in
+*.out

@@ -14,12 +14,13 @@
  *------------------------------------------------------
  */
 
-#include<iostream>
-#include<fstream>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 
 FILE *fin, *fout;
+char *file_in, *file_out;            /* The file name of input and output file */
 
 /*
  * Function: Base64_table
@@ -31,7 +32,7 @@ FILE *fin, *fout;
  *      c: the character that need to map
  *
  *   Returns:
- *      an interger that mapped from c
+ *      the integer that mapped from c
  */
 
 int base64_table(char c) {
@@ -45,6 +46,42 @@ int base64_table(char c) {
         return 62;
     else                                    /*   '/'   */
         return 63;
+}
+
+/*
+ * Function: Get_output_file
+ * -------------------
+ *   This function is used to get the name of the output file
+ *
+ *   Parameters:
+ *      input: the name of the input file
+ *
+ *   Returns:
+ *      the name of the output file
+ */
+
+char *get_output_file(char *input) {
+    char *output;
+    output = (char *)malloc(sizeof(char) * 1024);
+    strcpy(output, input);
+    char *end = output + strlen(output) - 1;
+    while (end > output) {
+        if (*end == '.') {                  /* If found extension name */
+            *(end + 1) = 'o';
+            *(end + 2) = 'u';
+            *(end + 3) = 't';
+            *(end + 4) = '\0';
+            return output;                  /* Change extension name to .out and return it */
+        }
+        end--;
+    }
+    end = output + strlen(output) - 1;      /* If not found extension name */
+    *(end + 1) = '.';
+    *(end + 2) = 'o';
+    *(end + 3) = 'u';
+    *(end + 4) = 't';
+    *(end + 5) = '\0';                      /* Just add .out extension at the end of file name */
+    return output;
 }
 
 /*
@@ -63,12 +100,16 @@ int main() {
     int count = 0;          /* Used to decide when to decode */
     int bin = 0;            /* Used to store the binary number */
     char c;
-    fin = fopen("encode.txt", "r");
-    fout = fopen("decode.txt", "w+");
-    if (!fin) {
-        printf("File open failed!\n");      /* Failed to open input file */
-        return 0;
+    file_in = (char *)malloc(sizeof(char) * 1024);
+    cout << "Please input a file name:" << endl;
+    scanf("%s", file_in);               /* Get input file name */
+    fin = fopen(file_in, "r+");
+    if (!fin) {                         /* If input file is not exist or can't open */
+        cout << "Can't open input file " <<  file_in << "! " << endl;
+        return 1;
     }
+    file_out = get_output_file(file_in);
+    fout = fopen(file_out, "w");
     while (!feof(fin)) {
         fscanf(fin, "%c", &c);
         if (c == '\n') continue;            /* New line character should be ignore */
@@ -96,4 +137,5 @@ int main() {
             bin = 0;
         }
     }
+    cout << "Decode done!" << endl;
 }

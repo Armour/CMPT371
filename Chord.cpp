@@ -260,6 +260,7 @@ int main() {
     fscanf(fin, "%d %d", &n, &m);
     if (n == 0) {                       /* There is no joined node */
         cout << "No joined node!" << endl;
+        fprintf(fout, "No joined node!");
         return 0;
     }
     exist_key = (int *)malloc(sizeof(int) * HASH_SPACE);
@@ -294,4 +295,5 @@ int main() {
             chord_query(id, key, 0);    /* Answer query */
         }
     }
+    cout << "Done!" << endl;
 }
