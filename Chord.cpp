@@ -14,9 +14,12 @@
  *------------------------------------------------------
  */
 
-#include <iostream>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <cmath>
+#include <iostream>
+#include <fstream>
 
 #define HASH_SPACE (s + 1)
 #define MAX_FINGER_NUM floor(log2(HASH_SPACE))
