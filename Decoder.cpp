@@ -113,8 +113,7 @@ int main() {
     }
     file_out = get_output_file(file_in);
     fout = fopen(file_out, "w");
-    while (!feof(fin)) {
-        fscanf(fin, "%c", &c);
+    while (fscanf(fin, "%c", &c) != EOF) {
         if (c == '\n') continue;            /* New line character should be ignore */
         if (c == '=') {                     /* If read until the end of file */
             if (count == 3) {               /* If just 3 characters in the end */
