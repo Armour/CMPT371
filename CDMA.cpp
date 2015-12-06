@@ -53,22 +53,37 @@ void init(void) {
     fin = fopen(file_in, "r+");
     if (!fin) {                                     /* If input file is not exist or can't open */
         cout << "Can't open input file " <<  file_in << "!" << endl;
-        exit(EXIT_FAILURE);
+        exit(0);
     }
     fscanf(fin, "%d %d %d", &n, &len_code, &len_dbs);
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < len_code; j++) {
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < len_code; j++)
             fscanf(fin, "%d", &code[i][j]);         /* Read code for different users */
-            if (abs(code[i][j]) != 1) {             /* If it is invalid code */
-                cout << "no" << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-    }
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < len_dbs; j++) {
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < len_dbs; j++)
             fscanf(fin, "%d", &dbs[i][j]);          /* Read data bits for different users */
-            if (abs(dbs[i][j]) != 1) {              /* If it is invalid code */
+}
+
+
+/*
+ * Function: Check
+ * -------------------
+ *   This function is used to check if the codes are valid
+ *
+ *   Parameters:
+ *      no parameters
+ *
+ *   Returns:
+ *      void
+ */
+
+void check(void) {
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {               /* Choose each pair of code */
+            int tmp = 0;
+            for (int k = 0; k < len_code; k++)
+                tmp += code[i][k] * code[j][k];
+            if (tmp != 0) {                             /* Test if codes are orthogonal to each other */
                 cout << "no" << endl;
                 exit(EXIT_FAILURE);
             }
@@ -118,5 +133,6 @@ void cdma(void) {
 
 int main() {
     init();
+    check();
     cdma();
 }
