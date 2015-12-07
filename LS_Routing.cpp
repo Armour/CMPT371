@@ -1,3 +1,19 @@
+/*------------------------------------------------------
+ *
+ *  LS_Routing.cpp
+ *
+ *  Project         : LS_Routing
+ *  Name            : Chong Guo
+ *  Student ID      : 301295753
+ *  Language        : C++
+ *  SFU username    : armourg
+ *
+ *  Created by Armour on 06/12/2015
+ *  Copyright (c) 2015 Armour. All rights reserved.
+ *
+ *------------------------------------------------------
+ */
+
 #include <iostream>
 #include <vector>
 #include <map>
