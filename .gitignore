@@ -2,6 +2,7 @@ Chord
 Decoder
 Encoder
 CDMA
+LS_Routing
 *.txt
 *.in
 *.out

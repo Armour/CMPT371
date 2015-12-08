@@ -15,6 +15,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <map>
 #include <set>
@@ -22,15 +23,16 @@
 #define EDGE pair<int, int>
 #define MAX_NODES 26
 #define INF (1 << 30)
+#define MAX_FILE_NAME_LENGTH 1024
 
 using namespace std;
 
-int n;                                  /* The number of nodes */
-map<int, char> nodes;                   /* Map the nodes' name */
-vector<int> dist(MAX_NODES, INF);       /* The minimal distance from source to this node */
-vector<int> pre(MAX_NODES, 0);          /* The previous node from source to this node */
+int n;                                      /* The number of nodes */
+map<int, char> nodes;                       /* Map the nodes' name */
+vector<int> dist(MAX_NODES, INF);           /* The minimal distance from source to this node */
+vector<int> pre(MAX_NODES, 0);              /* The previous node from source to this node */
 vector< vector< EDGE > > network(MAX_NODES, vector<EDGE>());        /* The network graph */
-set< EDGE > paths;                      /* The paths that in queue */
+set< EDGE > paths;                          /* The paths that in queue */
 
 /*
  * Function: Init
@@ -45,23 +47,32 @@ set< EDGE > paths;                      /* The paths that in queue */
  */
 
 void init(void) {
-    char ch;
     int len;
-    cin >> n;
-    getchar();
+    char name, space;
+    char file_in[MAX_FILE_NAME_LENGTH];                     /* The input file name */
+    cout << "Please input a file name (with extensions):" << endl;
+    cin >> file_in;                                         /* Get input file name */
+    ifstream fin(file_in);
+    if (!fin.is_open()) {                                   /* If input file is not exist or can't open */
+        cout << "Can't open input file " <<  file_in << "!" << endl;
+        exit(0);
+    }
+    fin >> n;
+    fin.get(space);
     for (int i = 0; i < n; i++) {
-        cin >> ch;
-        getchar();
-        nodes.insert(make_pair(i, ch));                 /* Map each node to one character */
+        fin.get(name);                                      /* Read node name */
+        fin.get(space);
+        nodes.insert(make_pair(i, name));                   /* Map each node to one character */
     }
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            cin >> len;
+            fin >> len;
             if (len > 0) {
-                network[i].push_back(make_pair(len, j));        /* Read the network direct link for node i */
+                network[i].push_back(make_pair(len, j));    /* Read the network direct link for node i */
             }
         }
     }
+    fin.close();                                            /* Close input file */
 }
 
 /*
@@ -138,3 +149,4 @@ int main() {
     dijkstra();             /* Routing algorithm */
     print();                /* Output forwarding table and shortest path */
 }
+

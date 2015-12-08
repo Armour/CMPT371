@@ -32,8 +32,6 @@ int len_dbs;                                            /* The length of data bi
 int code[MAX_USERS_NUMBER][MAX_CODE_LENGTH];            /* The code for different users */
 int dbs[MAX_USERS_NUMBER][MAX_DATABITS_LENGTH];         /* The data bits for different users */
 int encode[MAX_DATABITS_LENGTH][MAX_CODE_LENGTH];       /* The encoded bits */
-char file_in[MAX_FILE_NAME_LENGTH];                     /* The input file name */
-FILE *fin;
 
 /*
  * Function: Init
@@ -48,20 +46,22 @@ FILE *fin;
  */
 
 void init(void) {
+    char file_in[MAX_FILE_NAME_LENGTH];                     /* The input file name */
     cout << "Please input a file name (with extensions):" << endl;
-    scanf("%s", file_in);                           /* Get input file name */
-    fin = fopen(file_in, "r+");
-    if (!fin) {                                     /* If input file is not exist or can't open */
+    cin >> file_in;                                         /* Get input file name */
+    ifstream fin(file_in);
+    if (!fin.is_open()) {                                   /* If input file is not exist or can't open */
         cout << "Can't open input file " <<  file_in << "!" << endl;
         exit(0);
     }
-    fscanf(fin, "%d %d %d", &n, &len_code, &len_dbs);
+    fin >> n >> len_code >> len_dbs;
     for (int i = 0; i < n; i++)
         for (int j = 0; j < len_code; j++)
-            fscanf(fin, "%d", &code[i][j]);         /* Read code for different users */
+            fin >> code[i][j];                              /* Read code for different users */
     for (int i = 0; i < n; i++)
         for (int j = 0; j < len_dbs; j++)
-            fscanf(fin, "%d", &dbs[i][j]);          /* Read data bits for different users */
+            fin >> dbs[i][j];                               /* Read data bits for different users */
+    fin.close();
 }
 
 
